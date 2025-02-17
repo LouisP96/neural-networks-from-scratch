@@ -1,4 +1,4 @@
-# Neural_Networks_from_Scratch
+# Neural networks from scratch
 Building simple neural networks without the use of an ML/autodiff library.
 
 Binary classification used to predict whether an image of an item of clothing is a bag or not.
