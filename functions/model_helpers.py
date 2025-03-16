@@ -119,11 +119,8 @@ def model_accuracy(dataX, Y):
 def backprop(dA, cache):
     linear_cache, activation_cache = cache
 
-    # First, calculate dL/dZ
     Z = activation_cache
-    # Apply Sigmoid
     s = logistic(Z)
-    # dL/dZ in general form
     dZ = dA * s * (1 - s)
 
     # Using this, calculate the other differentials
@@ -139,7 +136,6 @@ def backprop(dA, cache):
 def backprop_loop(AL, Y, caches):
     grads = {}
     L = len(caches)
-    m = AL.shape[1]
     Y = Y.reshape(AL.shape)
 
     # Initialising backprop
