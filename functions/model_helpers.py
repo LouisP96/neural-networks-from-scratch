@@ -95,7 +95,6 @@ def forward_pass(X, parameters):
 
 def loss_fun(AL, Y):
     m = Y.shape[0]
-    # Compute loss from output (AL) and expected output (Y)
     loss = -(1 / m) * np.sum((Y * np.log(AL)) + (1 - Y) * np.log(1 - AL))
     loss = np.squeeze(loss)
     return loss
@@ -298,7 +297,6 @@ def three_layer_model(
         velocity = velocity_new
         """
 
-        # Add the epochs training loss and accuracy values to lists, ready for plotting
         loss.append(loss_fulldataset)
         accs.append(accuracy_fulldataset)
 
@@ -322,14 +320,12 @@ def three_layer_model(
             best_epoch = i
             best_dev_parameters = parameters
 
-        # Early stopping criteria
         if check_early_stopping(dev_loss, window_size=15, threshold=0.001, mode="min"):
             print("Early stopping: Validation loss has not decreased sufficiently.")
             break
 
         i += 1
 
-    # Format title of plots to reflect the hyperparameters and metrics
     title = (
         "Best Validation Accuracy: "
         + str(np.round(best_dev_accuracy, 3))
@@ -339,11 +335,11 @@ def three_layer_model(
         + "\n Learning rate = "
         + str(learning_rate)
     )
-    if momentum_coefficient != -1:  # Omit momentum in title if not needed
+    if momentum_coefficient != -1: 
         title += " Momentum = " + str(momentum_coefficient)
     if (
         batch_size != -1
-    ):  # Put -1 in batch_size to omit batch size from plot titles (e.g. if doing SGD)
+    ):  
         title += " Batch Size = " + str(batch_size)
 
     best_model = (

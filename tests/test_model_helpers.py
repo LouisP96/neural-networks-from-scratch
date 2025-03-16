@@ -185,23 +185,19 @@ def test_update_parameters():
 
 
 def test_three_layer_model():
-    # Create a small synthetic dataset.
     np.random.seed(0)
     n_features = 4
     n_examples = 20
     X = np.random.randn(n_features, n_examples)
     Y = (np.sum(X, axis=0) > 0).astype(int)
-    # Create a simple validation set.
     devxs = X[:, :5]
     devys = Y[:5]
-    # Define a 3-layer network architecture.
     layers_dims = [n_features, 3, 1]
     data_dims = X.shape[1]
     learning_rate = 0.01
     momentum_coefficient = 0.9
     max_epochs = 50
     batch_size = 5
-    # Run the three_layer_model.
     result = three_layer_model(
         X,
         Y,
