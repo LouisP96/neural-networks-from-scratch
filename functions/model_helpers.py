@@ -220,10 +220,10 @@ def check_early_stopping(metric_history, window_size=15, threshold=0.0, mode="ma
 
     if mode == "max":
         # For metrics we want to maximize, expect recent_mean to be higher.
-        return (recent_mean - previous_mean) < threshold
+        return bool((recent_mean - previous_mean) < threshold)
     elif mode == "min":
         # For metrics we want to minimize, expect recent_mean to be lower.
-        return (previous_mean - recent_mean) < threshold
+        return bool((previous_mean - recent_mean) < threshold)
     else:
         raise ValueError("mode must be either 'max' or 'min'")
 
