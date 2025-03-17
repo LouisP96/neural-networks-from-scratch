@@ -131,7 +131,6 @@ def test_backprop_and_backprop_loop():
     W = np.array([[0.5, -0.5]])
     b = np.array([[0]])
     Z = np.dot(W, A_prev) + b
-    A = logistic(Z)
     cache = ((A_prev, W, b), Z)
     dA = np.array([[0.1, -0.2]])
     dA_prev, dW, db = backprop(dA, cache)

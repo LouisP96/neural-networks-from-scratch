@@ -38,12 +38,12 @@ def build_model(layer_dims):
     parameters = {}
     L = len(layer_dims)
 
-    for l in range(1, L):
+    for layer_num in range(1, L):
         # Intilisation using Glorot Initilisation
-        parameters["W" + str(l)] = np.random.randn(
-            layer_dims[l], layer_dims[l - 1]
-        ) * np.sqrt(6 / (layer_dims[l - 1] + layer_dims[l]))
-        parameters["b" + str(l)] = np.zeros((layer_dims[l], 1))
+        parameters["W" + str(layer_num)] = np.random.randn(
+            layer_dims[layer_num], layer_dims[layer_num - 1]
+        ) * np.sqrt(6 / (layer_dims[layer_num - 1] + layer_dims[layer_num]))
+        parameters["b" + str(layer_num)] = np.zeros((layer_dims[layer_num], 1))
 
     return parameters
 
@@ -55,11 +55,11 @@ def forward_pass(X, parameters):
     L = len(parameters) // 2
 
     # Compute linear and sigmoid at each layer
-    for l in range(1, L):
+    for layer_num in range(1, L):
         A_prev = A
 
-        W = parameters["W" + str(l)]
-        b = parameters["b" + str(l)]
+        W = parameters["W" + str(layer_num)]
+        b = parameters["b" + str(layer_num)]
 
         # Linear calculation
         Z = np.dot(W, A_prev) + b
@@ -147,14 +147,14 @@ def backprop_loop(AL, Y, caches):
     )
 
     # Gradients from rest of the layers
-    for l in reversed(range(L - 1)):
-        current_cache = caches[l]
+    for layer_num in reversed(range(L - 1)):
+        current_cache = caches[layer_num]
         dA_prev_temp, dW_temp, db_temp = backprop(
-            grads["dA" + str(l + 2)], current_cache
+            grads["dA" + str(layer_num + 2)], current_cache
         )
-        grads["dA" + str(l + 1)] = dA_prev_temp
-        grads["dW" + str(l + 1)] = dW_temp
-        grads["db" + str(l + 1)] = db_temp
+        grads["dA" + str(layer_num + 1)] = dA_prev_temp
+        grads["dW" + str(layer_num + 1)] = dW_temp
+        grads["db" + str(layer_num + 1)] = db_temp
 
     return grads
 
@@ -167,25 +167,31 @@ def update_parameters(
     weight_increment = {}
     velocity_new = {}
 
-    for l in range(L):
-        weight_increment["W" + str(l + 1)] = learning_rate * grads["dW" + str(l + 1)]
-        weight_increment["b" + str(l + 1)] = learning_rate * grads["db" + str(l + 1)]
-
-        velocity_new["W" + str(l + 1)] = (
-            momentum_coefficient * velocity_old["W" + str(l + 1)]
-            + weight_increment["W" + str(l + 1)]
+    for layer_num in range(L):
+        weight_increment["W" + str(layer_num + 1)] = (
+            learning_rate * grads["dW" + str(layer_num + 1)]
         )
-        velocity_new["b" + str(l + 1)] = (
-            momentum_coefficient * velocity_old["b" + str(l + 1)]
-            + weight_increment["b" + str(l + 1)]
+        weight_increment["b" + str(layer_num + 1)] = (
+            learning_rate * grads["db" + str(layer_num + 1)]
+        )
+
+        velocity_new["W" + str(layer_num + 1)] = (
+            momentum_coefficient * velocity_old["W" + str(layer_num + 1)]
+            + weight_increment["W" + str(layer_num + 1)]
+        )
+        velocity_new["b" + str(layer_num + 1)] = (
+            momentum_coefficient * velocity_old["b" + str(layer_num + 1)]
+            + weight_increment["b" + str(layer_num + 1)]
         )
 
         # With momentum
-        parameters["W" + str(l + 1)] = (
-            parameters["W" + str(l + 1)] - velocity_new["W" + str(l + 1)]
+        parameters["W" + str(layer_num + 1)] = (
+            parameters["W" + str(layer_num + 1)]
+            - velocity_new["W" + str(layer_num + 1)]
         )
-        parameters["b" + str(l + 1)] = (
-            parameters["b" + str(l + 1)] - velocity_new["b" + str(l + 1)]
+        parameters["b" + str(layer_num + 1)] = (
+            parameters["b" + str(layer_num + 1)]
+            - velocity_new["b" + str(layer_num + 1)]
         )
 
     return parameters, velocity_new
@@ -258,7 +264,7 @@ def three_layer_model(
         "b3": np.array([0.0]),
     }
 
-    while (converged == False) and (i <= max_epochs):
+    while not converged and (i <= max_epochs):
         newX, newY = shuffle_data(X, Y)
 
         batchesX = batchify(newX, batch_size, 1, data_dims)
@@ -335,11 +341,9 @@ def three_layer_model(
         + "\n Learning rate = "
         + str(learning_rate)
     )
-    if momentum_coefficient != -1: 
+    if momentum_coefficient != -1:
         title += " Momentum = " + str(momentum_coefficient)
-    if (
-        batch_size != -1
-    ):  
+    if batch_size != -1:
         title += " Batch Size = " + str(batch_size)
 
     best_model = (
